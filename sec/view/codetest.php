@@ -20,7 +20,7 @@
 </div>
 <div class="row">
   <div class="col-xs-12">
-    <form action="index.php?" method="GET">
+    <form action="index.php?" method="POST">
       <div class="form-group">
         <label for="phpcode">PHP code:</label>
         <input type="text" class="form-control" id="phpcode" placeholder="<?php $phpcode ?>" name="phpcode">

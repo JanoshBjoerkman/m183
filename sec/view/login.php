@@ -9,7 +9,7 @@
 </div>
 <div class="row">
   <div class="col-xs-12">
-    <form action="index.php?" method="GET">
+    <form action="index.php?" method="POST">
       <div class="form-group">
         <label for="email">Username (Email):</label>
         <input type="email" class="form-control" id="email" placeholder="Enter email" name="username">

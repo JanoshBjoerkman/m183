@@ -36,7 +36,7 @@ class UserModel {
       $_SESSION["username"] = $username;
       $_SESSION["pwd"] = $pwd;
 
-      $isLoginSuccessful = true;
+       $isLoginSuccessful = true;
     } else {
       $this->auth->setToUnauthenticated();
 
