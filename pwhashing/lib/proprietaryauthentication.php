@@ -90,7 +90,7 @@ class ProprietaryAuthentication implements Authentication {
       $params1[":lastname"] = $userdata["lastname"];
     }
     if (isset($userdata["pwd"])) {
-      $params2[":pwd"] = $userdata["pwd"];
+      $params2[":pwd"] = password_hash($userdata["pwd"], PASSWORD_DEFAULT);
     }
 
 
