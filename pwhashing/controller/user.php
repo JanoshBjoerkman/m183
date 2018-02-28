@@ -46,7 +46,7 @@ class UserController extends Controller {
           //op = signup-form
           $this->view = "signup.php";
         } elseif (strcasecmp($_REQUEST["op"], "signup-action") == 0) {
-          //op = signup-form
+          //op = signup-forms
           $userdata = array (
             "username" => $_REQUEST["username"],
             "pwd" => $_REQUEST["pwd"],

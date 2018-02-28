@@ -155,4 +155,12 @@ class DataExtractor {
     }
   }
 
+  public function getPostContent()
+  {
+    if(isset($this->currentPost))
+    {
+      echo htmlentities($this->currentPost->content);
+    }
+  }
+
 }

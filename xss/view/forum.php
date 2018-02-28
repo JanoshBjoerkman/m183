@@ -37,7 +37,7 @@
           <?php echo $data->currentPost->firstname . " " . $data->currentPost->lastname ?>
           <small><i>Gepostet am: <?php echo $data->currentPost->getFormattedDate() ?></i></small>
         </h4>
-        <p><?php echo $data->currentPost->content ?></p>
+        <p><?php echo $data->getPostContent() ?></p>
       </div>
     </div>
 

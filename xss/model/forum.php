@@ -38,6 +38,13 @@ class ForumModel {
     $newPost;
     for ($i = 0; $i < $rowCount; $i++) {
       $newPost = new Post (
+        // htmlentities($rows[$i]->postid),
+        // htmlentities($rows[$i]->timestamp),
+        // htmlentities($rows[$i]->content), 
+        // htmlentities($rows[$i]->userid),
+        // htmlentities($rows[$i]->firstname),
+        // htmlentities($rows[$i]->lastname),
+        // htmlentities($rows[$i]->avatar));
         $rows[$i]->postid,
         $rows[$i]->timestamp,
         $rows[$i]->content, 

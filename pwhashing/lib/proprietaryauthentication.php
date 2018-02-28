@@ -16,7 +16,6 @@ class ProprietaryAuthentication implements Authentication {
 
     $rows = null;
   
-    
     if (isset($proof["username"]) && isset($proof["pwd"])) {
        
 
