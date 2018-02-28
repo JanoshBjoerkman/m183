@@ -24,16 +24,17 @@ class ProprietaryAuthentication implements Authentication {
           user.id,
           firstname,
           lastname,
+          pwd,
           mail
             from
               user, proprietary_auth, role
             where
               user.id = proprietary_auth.id and
               user.role_id = role.id and
-              mail = :username and
-              pwd = :pwd';
+              mail = :username';
 
-      $params = [':username' => $proof["username"], ":pwd" => $proof["pwd"]];
+      // $params = [':username' => $proof["username"], ":pwd" => $proof["pwd"]];
+      $params = [':username' => $proof["username"]];
       $rows = DB::getConnection()->select($sql, $params);
       $rowCount = count($rows);
 
@@ -48,7 +49,14 @@ class ProprietaryAuthentication implements Authentication {
 
       // user is authenticated
       } elseif ($rowCount == 1) {
-        $this->isAuthenticated = true;
+        if(password_verify($proof["pwd"], $rows[0]->pwd))
+        {
+          $this->isAuthenticated = true;
+        }
+        else
+        {
+          $this->isAuthenticated = false;
+        }
       }
     }
 
