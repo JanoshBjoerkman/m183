@@ -14,7 +14,8 @@ class DataExtractor {
   private $posts;
   private $currentPost;
 
-
+  // csrf
+  private $csfr;
 
   //authentication, authorization
   public $isAuthenticated = false;
@@ -51,6 +52,7 @@ class DataExtractor {
 
     } elseif ($controller instanceof ForumController) {
 
+      $this->setCSRF($controller);
       $this->setUserData ($controller->userModel);
       $this->setPosts($controller->forumModel->youngestChild);
 
@@ -67,6 +69,17 @@ class DataExtractor {
       }
 
     }
+  }
+
+  private function setCSRF($controller)
+  {
+    $this->csfr = base64_encode(random_bytes(100));
+    $controller->userModel->session->set("csfr", $this->csfr);
+  }
+
+  public function getCSFR()
+  {
+    return $this->csfr;
   }
 
   //make previous post to currentPost

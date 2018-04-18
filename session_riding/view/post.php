@@ -36,7 +36,9 @@
               value="<?php echo $data->getPostId()?>">
             </input>
           </div>
-
+          <div class="form-group">
+            <input type="hidden" class="form-control" name="csfr" value="<?php echo $data->getCSFR() ?>"></input>
+          </div>
           <div class="form-group">
             <button type="submit" class="btn btn-default btn-xs" name="op" value="newcomment">Post</button>
           </div>
@@ -47,7 +49,6 @@
       <p class="comment-btn-area">
         <button type="button" class="btn btn-default btn-xs comment-btn">Kommentieren</button>
       </p>
-
 
       <?php
         if ($data->issetYoungestChild()) {
