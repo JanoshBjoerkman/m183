@@ -10,7 +10,7 @@ class DB extends PDO {
     }
     catch(Exception $e)
     {
-      // TODO send email
+      Factory::sendMail(mail_config::$smsTo, "DB down!", "Can't reach db server. Please fix right now!");
       Factory::getErrorLogger()->error($e->getMessage());  
     }
   }

@@ -14,8 +14,43 @@ class Factory
   private function __construct() {}
   private function __clone() {}
 
+  // logging
   private static $auditLogger;
   private static $errorLogger;
+
+  // alert mail
+  private static $phpMailer;
+
+  public static function sendMail($to, $subject, $body)
+  {
+    try
+    {
+      $phpMailer = new PHPMailer();
+      //Server settings
+      $phpMailer->IsSMTP();                 // enable SMTP
+      // $phpMailer->SMTPDebug = 2;            // debugging: 1 = errors and messages, 2 = messages only
+      $phpMailer->SMTPAuth = true;          // authentication enabled
+      $phpMailer->SMTPSecure = 'ssl';       // secure transfer enabled REQUIRED for Gmail
+      $phpMailer->Host = mail_config::$host;
+      $phpMailer->Port = mail_config::$port;
+      $phpMailer->Username = mail_config::$user;
+      $phpMailer->Password = mail_config::$pw;
+      $phpMailer->SetFrom(mail_config::$setFrom);
+
+      // recipients
+      $phpMailer->AddAddress($to);
+
+      // content
+      $phpMailer->IsHTML(true);
+      $phpMailer->Subject = $subject;
+      $phpMailer->Body = $body;
+      $phpMailer->send();
+    }
+    catch(Exception $e)
+    {
+      Factory::getErrorLogger($e->getMessage);
+    }
+  }
 
   public static function getAuditlogger()
   {
