@@ -11,9 +11,33 @@ use PHPMailer\PHPMailer\Exception;
 
 class Factory
 {
-
   private function __construct() {}
   private function __clone() {}
+
+  private static $auditLogger;
+  private static $errorLogger;
+
+  public static function getAuditlogger()
+  {
+    if(!isset($auditLogger))
+    {
+      $auditLogger = new Logger("auditLogger");
+      $streamHandler = new StreamHandler('./logs/audit.log', Logger::DEBUG);
+      $auditLogger->pushHandler($streamHandler);
+    }
+    return $auditLogger;
+  }
+
+  public static function getErrorLogger()
+  {
+    if(!isset($errorLogger))
+    {
+      $errorLogger = new Logger("errorLogger");
+      $streamHandler = new StreamHandler('./logs/app.log', Logger::DEBUG);
+      $errorLogger->pushHandler($streamHandler);
+    }
+    return $errorLogger;
+  }
   
   public static function getUserModel () {
 

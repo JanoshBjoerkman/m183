@@ -37,6 +37,7 @@ class BlogController extends Controller {
     } catch (Exception $e) {
       //something unknown went wrong
       $this->setAlert(true, ALERT_DANGER, $e->getMessage());
+      Factory::getErrorLogger($e->getMessage());
     } finally {
       $this->render($this->view, new DataExtractor($this));
     }

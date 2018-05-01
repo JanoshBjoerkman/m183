@@ -18,18 +18,21 @@ class ForumController extends Controller {
     try {
       $this->userModel = Factory::getUserModel();
 
-      if ($this->userModel->auth->isAuthenticated()) {
-
+      if ($this->userModel->auth->isAuthenticated()) 
+      {
         $this->forumModel = Factory::getForumModel();
 
-        if (strcasecmp($_REQUEST["op"], "newpost") == 0) {
+        if (strcasecmp($_REQUEST["op"], "newpost") == 0)
+        {
           $isSuccessful = $this->forumModel->addPost($this->userModel->id, $_REQUEST["content"], null);
-          if (!$isSuccessful) {
+          if (!$isSuccessful)
+          {
             $this->setAlert(true, ALERT_DANGER, "Unknown error. Adding new post failed.");
           }
-        } elseif (strcasecmp($_REQUEST["op"], "newcomment") == 0) {
-          $isSuccessful =
-            $this->forumModel->addPost($this->userModel->id, $_REQUEST["content"], $_REQUEST["postid"]);
+        } 
+        elseif (strcasecmp($_REQUEST["op"], "newcomment") == 0) 
+        {
+          $isSuccessful = $this->forumModel->addPost($this->userModel->id, $_REQUEST["content"], $_REQUEST["postid"]);
           if (!$isSuccessful) {
             $this->setAlert(true, ALERT_DANGER, "Unknown error. Adding new post failed.");
           }
@@ -37,12 +40,16 @@ class ForumController extends Controller {
 
         $this->view = "forum.php"; 
       
-      } else {
+      } 
+      else
+      {
          $this->setAlert(true, ALERT_DANGER, "Access denied. Please login.");
+         Factory::getErrorLogger()->warning("Forum access denied. Please login. Request from ".$_SERVER['REMOTE_ADDR']);
       }   
     } catch (Exception $e) {
       //something unknown went wrong
       $this->setAlert(true, ALERT_DANGER, $e->getMessage());
+      Factory::getErrorLogger()->error($e->getMessage());
     } finally {
       $this->render($this->view, new DataExtractor($this));
     }

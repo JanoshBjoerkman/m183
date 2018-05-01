@@ -6,6 +6,9 @@ require_once(LIBRARY_PATH . "/db.php");
 require_once(LIBRARY_PATH . "/factory.php");
 require_once(LIBRARY_PATH . "/dataextractor.php");
 
+require_once("./vendor/autoload.php");
+require_once("./pw.php");
+
 //Constants 
 //error codes
 define("UNKNOWN_ERROR", 1000);

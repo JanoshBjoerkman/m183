@@ -4,7 +4,15 @@ class DB extends PDO {
 
 
   private function __construct($dsn, $dbUser, $dbPwd, $options) {
-    parent::__construct($dsn, $dbUser, $dbPwd, $options);
+    try
+    {
+      parent::__construct($dsn, $dbUser, $dbPwd, $options);
+    }
+    catch(Exception $e)
+    {
+      // TODO send email
+      Factory::getErrorLogger()->error($e->getMessage());  
+    }
   }
 
   private function __clone() {}
