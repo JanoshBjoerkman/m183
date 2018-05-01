@@ -32,21 +32,31 @@ class UserController extends Controller {
         }
       
       //case: unauthenticated session
-      } else {
-
-        if (strcasecmp($_REQUEST["op"], "login-form") == 0) {
+      } 
+      else
+      {
+        if (strcasecmp($_REQUEST["op"], "login-form") == 0) 
+        {
           //op = login-form
           $this->view = "login.php";       
-        } elseif (strcasecmp($_REQUEST["op"], "login-action") == 0) {
+        }
+        elseif (strcasecmp($_REQUEST["op"], "login-action") == 0) 
+        {
           //op = login-action
           if (isset($_REQUEST["username"]) && isset($_REQUEST["pwd"]) && $this->userModel->login($_REQUEST["username"],$_REQUEST["pwd"]))
           {
+            // logging
             Factory::getAuditLogger()->info("login successful", array(
               "time" => date("Y-m-d h:i:sa", time()),
               "username" => $_REQUEST["username"],
               "role" => $this->userModel->role,
               "ip" => $_SERVER["REMOTE_ADDR"]
             ));
+            // reset login tries
+            $session = Session::getSession();
+            $session->unset("last_login_try");
+            $session->unset("login_try_count");
+            $session->unset("login_ip");
             $this->view = "home.php";
           }
           else
@@ -58,6 +68,9 @@ class UserController extends Controller {
               "role" => $this->userModel->role,
               "ip" => $_SERVER["REMOTE_ADDR"]
             ));
+
+            $this->checkLoginTries($_REQUEST["username"], $_REQUEST["pwd"]);
+
             $this->setAlert(true, ALERT_DANGER, "Login failed. Username or password wrong.");
             $this->view = "login.php";
           }
@@ -120,6 +133,45 @@ class UserController extends Controller {
     {
       $this->render($this->view, new DataExtractor($this));
     }
+  }
+
+  private function checkLoginTries($username, $pw)
+  {
+    $session = Session::getSession();
+    // save ip
+    $session->set("login_ip", $_SERVER["REMOTE_ADDR"]);
+
+    // update login try count
+    if(!$session->isSet("login_try_count"))
+    {
+      $session->set("login_try_count", 1);
+    }
+    else
+    {
+      $try_count = $session->get("login_try_count");
+      $last_login_try = $session->get("last_login_try");
+
+      // only check count when login try is < 1 min
+      $timeDifference = strtotime(date("Y-m-d h:i:s")) - strtotime($last_login_try);
+      if($timeDifference <= 60)
+      {
+        if($try_count > 3)
+        {
+          Factory::sendMail(mail_config::$emailTo, 
+          $session->get("login_ip")." login tries over 3", 
+          $session->get("login_ip")." tried to login too many times. Username: {$username} Password: {$pw}");          
+        }
+        $session->set("login_try_count", $try_count+1);
+      }
+      else
+      {
+        // time is ok, reset login try count
+        $session->set("login_try_count", 0);
+      } 
+    }
+
+    // update time
+    $session->set("last_login_try", date("Y-m-d h:i:s"));
   }
 }
 ?>
