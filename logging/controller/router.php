@@ -4,8 +4,27 @@ class Router {
     
   public $controller;
   
-  public function __construct () {
+  public function __construct ()
+  {
+    // log ip, timestamp and operation for every request
+    $timestamp = date('Y-m-d H:i:s');
+    $operation = isset($_REQUEST["op"]) ? $_REQUEST["op"] : "";
 
+    $params = array (
+      ":ip" => $_SERVER["REMOTE_ADDR"],
+      ":timestamp" => $timestamp,
+      ":operation" => $operation,
+    );
+
+    $sql =
+      "insert into request
+          (ip, timestamp, operation)
+        values
+          (:ip, :timestamp, :operation)";
+    $stmts = array (
+      array ($sql, $params)
+    );
+    $success = DB::getConnection()->insertOrUpdate($stmts);
 
     //handling forms
     if (isset($_REQUEST["op"])) {

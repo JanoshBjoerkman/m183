@@ -69,7 +69,8 @@ class UserController extends Controller {
               "ip" => $_SERVER["REMOTE_ADDR"]
             ));
 
-            $this->checkLoginTries($_REQUEST["username"], $_REQUEST["pwd"]);
+            $this->checkLoginTriesDBbased();
+            // $this->checkLoginTries($_REQUEST["username"], $_REQUEST["pwd"]);
 
             $this->setAlert(true, ALERT_DANGER, "Login failed. Username or password wrong.");
             $this->view = "login.php";
@@ -136,7 +137,10 @@ class UserController extends Controller {
   }
 
   private function checkLoginTries($username, $pw)
-  {
+  { 
+
+    // TODO: check requests in DB
+
     $session = Session::getSession();
     // save ip
     $session->set("login_ip", $_SERVER["REMOTE_ADDR"]);
@@ -172,6 +176,31 @@ class UserController extends Controller {
 
     // update time
     $session->set("last_login_try", date("Y-m-d h:i:s"));
+  }
+
+  private function checkLoginTriesDBbased()
+  {
+    $ip = $_SERVER["REMOTE_ADDR"];
+    $timestamp = date('Y-m-d H:i:s');
+
+    $sql = "select * from request r
+            where
+            TIMESTAMPDIFF(SECOND,r.timestamp, :timestamp) <= 60 && r.ip = :ip";
+
+    $params = array (
+      ":ip" => $ip,
+      ":timestamp" => $timestamp
+    );
+
+    $results = DB::getConnection()->select($sql, $params);
+    $count = count($results);
+
+    if($count > 3)
+    {
+      Factory::sendMail(mail_config::$emailTo, 
+          $ip." tried to login over 3 times in a minute", 
+          $ip." tried to login too many times."); 
+    }
   }
 }
 ?>
