@@ -41,6 +41,15 @@ class ForumModel {
     $isSuccessful = DB::getConnection()->insertOrUpdate($stmts);
     $this->loadPosts();
 
+    if($isSuccessful)
+    {
+      Factory::getAuditLogger()->info("post added", array(
+        "time" => date("Y-m-d h:i:sa", time()),
+        "user_id" => $userId,
+        "ip" => $_SERVER["REMOTE_ADDR"]
+      ));
+    }
+
     return $isSuccessful;
   }
 

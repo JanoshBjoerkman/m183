@@ -14,7 +14,6 @@ class BlogController extends Controller {
 
   public function handleRequest () {
 
-
     try {
       $this->userModel = Factory::getUserModel();
 
@@ -33,10 +32,17 @@ class BlogController extends Controller {
       
       } else {
          $this->setAlert(true, ALERT_DANGER, "Access denied. Please login.");
+         Factory::getAuditLogger()->info("Access denied for blog.php", array(
+          "time" => date("Y-m-d h:i:sa", time()),
+          "username" => $_REQUEST["username"],
+          "role" => $this->userModel->role,
+          "ip" => $_SERVER["REMOTE_ADDR"]
+        ));
       }   
     } catch (Exception $e) {
       //something unknown went wrong
       $this->setAlert(true, ALERT_DANGER, $e->getMessage());
+      Factory::getErrorLogger()->error($e->getMessage());
     } finally {
       $this->render($this->view, new DataExtractor($this));
     }

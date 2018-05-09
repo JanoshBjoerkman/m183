@@ -31,6 +31,15 @@ class ForumController extends Controller {
               $this->setAlert(true, ALERT_DANGER, "Unknown error. Adding new post failed.");
             }
           }
+          else
+          {
+            Factory::getAuditLogger()->info("csrf token invalid", array(
+              "time" => date("Y-m-d h:i:sa", time()),
+              "mail" => $this->userModel->mail,
+              "role" => $this->userModel->role,
+              "ip" => $_SERVER["REMOTE_ADDR"]
+            ));
+          }
 
         } elseif (strcasecmp($_REQUEST["op"], "newcomment") == 0) {
 
@@ -42,6 +51,15 @@ class ForumController extends Controller {
               $this->setAlert(true, ALERT_DANGER, "Unknown error. Adding new post failed.");
             }
           }
+          else
+          {
+            Factory::getAuditLogger()->info("csrf token invalid", array(
+              "time" => date("Y-m-d h:i:sa", time()),
+              "mail" => $this->userModel->mail,
+              "role" => $this->userModel->role,
+              "ip" => $_SERVER["REMOTE_ADDR"]
+            ));
+          }
         }
 
         $this->view = "forum.php"; 
@@ -52,6 +70,7 @@ class ForumController extends Controller {
     } catch (Exception $e) {
       //something unknown went wrong
       $this->setAlert(true, ALERT_DANGER, $e->getMessage());
+      Factory::getErrorLogger()->error($e->getMessage());
     } finally {
       $this->render($this->view, new DataExtractor($this));
     }

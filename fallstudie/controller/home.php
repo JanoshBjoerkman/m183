@@ -18,6 +18,7 @@ class HomeController extends Controller {
       //something unknown went wrong, go to login page again
       //and make sure that user is not authenticated
       $this->setAlert(true, ALERT_DANGER, $e->getMessage());
+      Factory::getErrorLogger()->error($e->getMessage());
     } finally {
       $this->render($this->view, new DataExtractor($this));
     }

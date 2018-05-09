@@ -34,10 +34,21 @@ class UserController extends Controller {
           $this->view = "login.php";       
         } elseif (strcasecmp($_REQUEST["op"], "login-action") == 0) {
           //op = login-action
-          if (
-            isset($_REQUEST["username"]) && isset($_REQUEST["pwd"]) && $this->userModel->login($_REQUEST["username"],$_REQUEST["pwd"])) {
+          if (isset($_REQUEST["username"]) && isset($_REQUEST["pwd"]) && $this->userModel->login($_REQUEST["username"],$_REQUEST["pwd"])) {
+            Factory::getAuditLogger()->info("login successful", array(
+              "time" => date("Y-m-d h:i:sa", time()),
+              "username" => $_REQUEST["username"],
+              "role" => $this->userModel->role,
+              "ip" => $_SERVER["REMOTE_ADDR"]
+            ));
             $this->view = "home.php";
           } else {
+            Factory::getAuditLogger()->info("login failed", array(
+              "time" => date("Y-m-d h:i:sa", time()),
+              "username" => $_REQUEST["username"],
+              "role" => $this->userModel->role,
+              "ip" => $_SERVER["REMOTE_ADDR"]
+            ));
             //authentication fails due to wrong username or password, show login form again
             $this->setAlert(true, ALERT_DANGER, "Login failed. Username or password wrong.");
             $this->view = "login.php";
@@ -56,10 +67,22 @@ class UserController extends Controller {
           );
           $isSuccessful = $this->userModel->auth->signup($userdata);
           if ($isSuccessful) {
+            Factory::getAuditLogger()->info("signup successful", array(
+              "time" => date("Y-m-d h:i:sa", time()),
+              "username" => $_REQUEST["username"],
+              "role" => $this->userModel->role,
+              "ip" => $_SERVER["REMOTE_ADDR"]
+            ));
             //signup was successful, go to login page
             $this->setAlert(true, ALERT_SUCCESS, "Sign up successful. Pleas log in.");
             $this->view = "login.php";
           } else {
+            Factory::getAuditLogger()->info("signup failed", array(
+              "time" => date("Y-m-d h:i:sa", time()),
+              "username" => $_REQUEST["username"],
+              "role" => $this->userModel->role,
+              "ip" => $_SERVER["REMOTE_ADDR"]
+            ));
             throw new Exception ("Sign up failed", ERR_SIGNUP);
           }
 
@@ -72,6 +95,9 @@ class UserController extends Controller {
       //something went wrong, go to login page again
       //set alert message
       $this->setAlert(true, ALERT_DANGER, $e->getMessage());
+
+      Factory::getErrorLogger()->error($e->getMessage());
+
       //make sure to be logged out
       if (isset($this->userModel->auth)) {
         $this->userModel->logout();
