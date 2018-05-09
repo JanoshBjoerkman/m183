@@ -13,8 +13,6 @@ class ForumController extends Controller {
   }
 
   public function handleRequest () {
-
-
     try {
       $this->userModel = Factory::getUserModel();
 
@@ -23,15 +21,26 @@ class ForumController extends Controller {
         $this->forumModel = Factory::getForumModel();
 
         if (strcasecmp($_REQUEST["op"], "newpost") == 0) {
-          $isSuccessful = $this->forumModel->addPost($this->userModel->id, $_REQUEST["content"], null);
-          if (!$isSuccessful) {
-            $this->setAlert(true, ALERT_DANGER, "Unknown error. Adding new post failed.");
+
+          // check if csfr token is valid
+          if($this->userModel->session->get("csfr") == $_REQUEST['csfr'])
+          {
+            $isSuccessful = $this->forumModel->addPost($this->userModel->id, $_REQUEST["content"], null);
+            if (!$isSuccessful)
+            {
+              $this->setAlert(true, ALERT_DANGER, "Unknown error. Adding new post failed.");
+            }
           }
+
         } elseif (strcasecmp($_REQUEST["op"], "newcomment") == 0) {
-          $isSuccessful =
-            $this->forumModel->addPost($this->userModel->id, $_REQUEST["content"], $_REQUEST["postid"]);
-          if (!$isSuccessful) {
-            $this->setAlert(true, ALERT_DANGER, "Unknown error. Adding new post failed.");
+
+          if($this->userModel->session->get("csfr") == $_REQUEST['csfr'])
+          {
+            $isSuccessful = $this->forumModel->addPost($this->userModel->id, $_REQUEST["content"], $_REQUEST["postid"]);
+            if (!$isSuccessful)
+            {
+              $this->setAlert(true, ALERT_DANGER, "Unknown error. Adding new post failed.");
+            }
           }
         }
 

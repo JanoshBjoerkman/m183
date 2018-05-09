@@ -13,6 +13,9 @@
         <textarea class="form-control" rows="5" id="post" name="content" required></textarea>
       </div>
       <div class="form-group">
+        <input type="hidden" class="form-control" name="csfr" value="<?php echo $data->getCSFR() ?>"></input>
+      </div>
+      <div class="form-group">
         <button type="submit" class="btn btn-default" name="op" value="newpost">Post</button>
       </div>
     </form>
