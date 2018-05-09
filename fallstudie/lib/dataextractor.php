@@ -208,44 +208,45 @@ class DataExtractor {
   }
 
   public function getFirstname () {
-    return $this->firstname;
+    return htmlentities($this->firstname);
   }
 
   public function getLastname () {
-    return $this->lastname;
+    return htmlentities($this->lastname);
   }
 
   public function getMail () {
-    return $this->mail;
+    return htmlentities($this->mail);
   }
 
   public function getAvatar () {
-    return $this->avatar;
+    return htmlentities($this->avatar);
   }
 
   public function getPostId () {
-    return $this->currentPost->id;
+    return htmlentities($this->currentPost->id);
   }
   
 
   public function getPostContent () {
-    return $this->currentPost->content;
+
+    return htmlentities($this->currentPost->content);
   }
 
   public function getPosterFirstname () {
-    return $this->currentPost->firstname;
+    return htmlentities($this->currentPost->firstname);
   }
 
   public function getPosterLastname () {
-    return $this->currentPost->lastname;
+    return htmlentities($this->currentPost->lastname);
   }
 
   public function getPosterAvatar () {
-    return $this->currentPost->avatar;
+    return htmlentities($this->currentPost->avatar);
   }
 
   public function getPostDate () {
-    return strftime ("%e. %B um Uhr %H:%M:%S", $this->currentPost->postingDate->getTimestamp());
+    return htmlentities(strftime ("%e. %B um Uhr %H:%M:%S", $this->currentPost->postingDate->getTimestamp()));
   }
 
   

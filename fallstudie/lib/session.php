@@ -5,7 +5,16 @@ class Session {
   private static $instance;
 
   private function __construct () {
-    session_start();
+    $this->refresh();
+  }
+
+  public function refresh()
+  {
+      if(!isset($_SESSION)) 
+      { 
+          session_start(); 
+      }
+      session_regenerate_id(true);
   }
 
   private function __clone () {}

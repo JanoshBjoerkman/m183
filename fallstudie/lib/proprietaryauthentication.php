@@ -26,6 +26,7 @@ class ProprietaryAuthentication implements Authentication {
           firstname,
           lastname,
           mail,
+          pwd,
           avatar,
           role.code as rolecode
             from
@@ -33,10 +34,9 @@ class ProprietaryAuthentication implements Authentication {
             where
               user.id = proprietary_auth.id and
               user.role_id = role.id and
-              mail = :username and
-              pwd = :pwd';
+              mail = :username';
 
-      $params = [':username' => $proof["username"], ":pwd" => $proof["pwd"]];
+      $params = [':username' => $proof["username"]];
       $rows = DB::getConnection()->select($sql, $params);
       $rowCount = count($rows);
 
@@ -49,9 +49,19 @@ class ProprietaryAuthentication implements Authentication {
       } elseif ($rowCount == 0) {
         $this->setToUnauthenticated();
 
-      // user is authenticated
-      } elseif ($rowCount == 1) {
-        $this->isAuthenticated = true;
+      // user is probalby authenticated
+      }
+      elseif ($rowCount == 1)
+      {
+        // password verification
+        if(password_verify($proof["pwd"], $rows[0]->pwd))
+        {
+          $this->isAuthenticated = true;
+        }
+        else
+        {
+          $this->isAuthenticated = false;
+        }
       }
     }
 
@@ -95,7 +105,7 @@ class ProprietaryAuthentication implements Authentication {
       $params1[":avatar"] = $userdata["avatar"];
     }
     if (isset($userdata["pwd"])) {
-      $params2[":pwd"] = $userdata["pwd"];
+      $params2[":pwd"] = password_hash($userdata["pwd"], PASSWORD_DEFAULT);
     }
     
 
